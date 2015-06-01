@@ -20,8 +20,8 @@ void setup() {
 }
 
 void loop() {
-  char* response = hm10->getResponse();
-  /*char response[] = { 0b11110100 };*/
+  //char* response = hm10->getRespons();
+  char response[] = { 0b10110100 };
   
   if(response[0] == 0) {
     delay(5000);
@@ -31,17 +31,18 @@ void loop() {
   int checkedBit = 128; // 1000 0000
   byte checkedResponse = (byte)response[0];
     
-  for(int i=0; i < 4; i++) {
-    int checkedLight = checkedBit >> 4;
+  for(int i=0; i < 4; i++) {    
     if(checkedResponse & checkedBit) {
       lightEnable[i] = 1;
-      if(checkedResponse & checkedLight) {
-        lightStatus[i] = 1;        
-      } else {
-        lightStatus[i] = 0;
-      }
     } else {
       lightEnable[i] = 0;
+    }
+    
+    int checkedLight = checkedBit >> 4;
+    if(checkedResponse & checkedLight) {
+      lightStatus[i] = 1;        
+    } else {
+      lightStatus[i] = 0;
     }
     
     checkedBit >>= 1;
