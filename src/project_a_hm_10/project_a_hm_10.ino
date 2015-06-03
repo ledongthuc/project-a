@@ -16,22 +16,25 @@ void setup() {
   char* result = hm10->setServiceId(SERVICE_ID);
   Serial.print(result);
   Serial.print("\n\n");
+  
+  Serial.print("Set Notification Information, Receive: ");
+  char* result2 = hm10->setNotificationInformation("1");
+  Serial.print(result2);
+  Serial.print("\n\n");
 
   setAdvertisingData(defaultAdvertisingData);
 }
 
 void loop() {
   char* response = hm10->getResponse();
-  if(response[0] == 0) {
+  // OK+CONN
+  if(response[7] == 0) {
     delay(5000);
     return;
   }
-  
-  // Delay 10secs because when response from IOS, it takes 10secs before sending next AT commands
-  delay(10000);
-  
+  char checkedResponse = (char)response[7]; 
   int checkedBit = 128; // 1000 0000
-  char checkedResponse = (char)response[0];
+  Serial.println(checkedResponse);
   for(int i=0; i < 4; i++) {    
     if(checkedResponse & checkedBit) {
       lightEnable[i] = 1;
@@ -48,6 +51,9 @@ void loop() {
     
     checkedBit >>= 1;
   }
+  
+  //OK+LOST
+  hm10->sendTestCommand();
   
   setAdvertisingData(checkedResponse);
   
