@@ -1,5 +1,7 @@
 #include <Hm10.h>
 #include <Utility.h>
+#include "OutletManager.h"
+#include "BleManager.h"
 
 #define SERVICE_ID "0xB000"
 
