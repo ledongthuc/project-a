@@ -1,40 +1,32 @@
-#include <Hm10.h>
 #include <Utility.h>
 #include "OutletManager.h"
 #include "BleManager.h"
 
-#define SERVICE_ID "0xB000"
+#define RX_PIN                     10
+#define TX_PIN                     11
+#define BAUD_RATE                  9600
+#define SERVICE_ID                 "0xB000"
+#define NOTIFICATION_INFORMATION   "1"
+#define DEFAULT_ADVERTISING_DATA   0b11110000
 
-Hm10* hm10;
+
+BleManager* bleManager;
 int lightEnable[4];
 int lightStatus[4];
 char defaultAdvertisingData = 0b11110000;
   
 void setup() {
   Serial.begin(9600);
-  hm10 = new Hm10(10, 11);
   
-  Serial.print("Set Service ID, Receive: ");
-  char* result = hm10->setServiceId(SERVICE_ID);
-  Serial.print(result);
-  Serial.print("\n\n");
-  
-  Serial.print("Set Notification Information, Receive: ");
-  char* result2 = hm10->setNotificationInformation("1");
-  Serial.print(result2);
-  Serial.print("\n\n");
-
-  setAdvertisingData(defaultAdvertisingData);
+  bleManager = new BleManager(RX_PIN, TX_PIN, BAUD_RATE);
+  bleManager->setServiceId(SERVICE_ID);
+  bleManager->setNotificationInformation(NOTIFICATION_INFORMATION);
+  bleManager->setAdvertisingData(DEFAULT_ADVERTISING_DATA);
 }
 
 void loop() {
-  char* response = hm10->getResponse();
-  // OK+CONN
-  if(response[7] == 0) {
-    delay(5000);
-    return;
-  }
-  char checkedResponse = (char)response[7]; 
+  char checkedResponse = bleManager->getResponse();
+  
   int checkedBit = 128; // 1000 0000
   Serial.println(checkedResponse);
   for(int i=0; i < 4; i++) {    
@@ -54,10 +46,8 @@ void loop() {
     checkedBit >>= 1;
   }
   
-  //OK+LOST
-  hm10->sendTestCommand();
-  
-  setAdvertisingData(checkedResponse);
+  bleManager->disconnectRemotedDevices();
+  bleManager->setAdvertisingData(checkedResponse);
   
   Serial.println("Raw data: ");
   Serial.println(checkedResponse, BIN);
@@ -78,11 +68,4 @@ void printLightStatus() {
     Serial.print(", Status: ");
     Serial.println(lightStatus[i]);
   }
-}
-
-void setAdvertisingData(char updatedData) {
-  Serial.print("Set Advertising Data, Receive: ");
-  char* result = hm10->setAdvertisingDataFlag(updatedData);
-  Serial.print(result);
-  Serial.print("\n\n");
 }
