@@ -14,7 +14,7 @@ Outlet::Outlet(OutletStatus status) {
   this->status = status;
 }
 
-void Outlet::updateStatus(OutletStatus status) {
+void Outlet::setStatus(OutletStatus status) {
   this->status = status;
 }
 

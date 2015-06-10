@@ -17,7 +17,7 @@ void OutletManager::updateOutletStatus(char signal) {
   this->signalParser->parseOutletSignal(signal, status);
   
   for(int index=0; index < 4; index++) {
-    this->outlets[index]->updateStatus(status[index]);
+    this->outlets[index]->setStatus(status[index]);
   }
 }
 

@@ -9,7 +9,7 @@ class Outlet {
     Outlet();
     Outlet(bool isExist, bool status);
     Outlet(OutletStatus outletStatus);
-    void updateStatus(OutletStatus outletStatus);
+    void setStatus(OutletStatus outletStatus);
     OutletStatus getStatus();
   private:
     OutletStatus status;
