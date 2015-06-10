@@ -7,12 +7,14 @@
 class OutletManager {
   public:
     OutletManager(int numberOfOutlet);
-    void UpdateOutletStatus(char signal);
-    char GetOutletSignal();
+    void updateOutletStatus(char signal);
+    void setOutletSignal(char signal);
+    char getOutletSignal();
   private:
     int numberOfOutlet;
-    Outlet outlets[];
-    OutletSignalParser signalParser;
+    Outlet* outlets[4];
+    char signal;
+    OutletSignalParser* signalParser;
 };
 
 #endif
