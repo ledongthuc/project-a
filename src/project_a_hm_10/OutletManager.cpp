@@ -11,7 +11,7 @@ OutletManager::OutletManager(int numberOfOutlet) {
 }
 
 void OutletManager::updateOutletStatus(char signal) {
-  this->setOutletSignal(signal);
+  this->signal = signal;
   
   OutletStatus status[4];
   this->signalParser->parseOutletSignal(signal, status);
@@ -19,10 +19,6 @@ void OutletManager::updateOutletStatus(char signal) {
   for(int index=0; index < 4; index++) {
     this->outlets[index]->setStatus(status[index]);
   }
-}
-
-void OutletManager::setOutletSignal(char signal) {
-  this->signal = signal;
 }
 
 char OutletManager::getOutletSignal() {

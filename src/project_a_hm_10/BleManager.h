@@ -6,6 +6,7 @@
 class BleManager {
   private:
     Hm10* hm10;
+    bool isConnectionResponse(char* response);
   public:
     BleManager(int rxPin, int txPin, int baudRate);
     void setServiceId(char* serviceId);

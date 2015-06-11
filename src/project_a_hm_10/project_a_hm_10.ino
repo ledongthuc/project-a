@@ -11,9 +11,9 @@
 
 
 BleManager* bleManager;
+OutletManager* outletManager;
 int lightEnable[4];
 int lightStatus[4];
-char defaultAdvertisingData = 0b11110000;
   
 void setup() {
   Serial.begin(9600);
@@ -22,50 +22,22 @@ void setup() {
   bleManager->setServiceId(SERVICE_ID);
   bleManager->setNotificationInformation(NOTIFICATION_INFORMATION);
   bleManager->setAdvertisingData(DEFAULT_ADVERTISING_DATA);
+  
+  outletManager = new OutletManager(4);
 }
 
 void loop() {
-  char checkedResponse = bleManager->getResponse();
+  char rawResponse = bleManager->getResponse();
   
-  int checkedBit = 128; // 1000 0000
-  Serial.println(checkedResponse);
-  for(int i=0; i < 4; i++) {    
-    if(checkedResponse & checkedBit) {
-      lightEnable[i] = 1;
-    } else {
-      lightEnable[i] = 0;
-    }
-    
-    int checkedLight = checkedBit >> 4;
-    if(checkedResponse & checkedLight) {
-      lightStatus[i] = 1;
-    } else {
-      lightStatus[i] = 0;
-    }
-    
-    checkedBit >>= 1;
-  }
-  
-  bleManager->disconnectRemotedDevices();
-  bleManager->setAdvertisingData(checkedResponse);
-  
-  Serial.println("Raw data: ");
-  Serial.println(checkedResponse, BIN);
-  Serial.println("Light Status: ");
-  printLightStatus();
+  Serial.print("RawResponse: ");
+  Serial.print(rawResponse);
   Serial.println();
   
+  outletManager->updateOutletStatus(rawResponse);
+  
+  bleManager->disconnectRemotedDevices();
+  bleManager->setAdvertisingData(rawResponse);
   
   delay(5000);
 }
 
-void printLightStatus() {
-  for(int i=0; i < 4; i++) {
-    Serial.print("- Light ");
-    Serial.print(i + 1);
-    Serial.print(", Enable: ");
-    Serial.print(lightEnable[i]);
-    Serial.print(", Status: ");
-    Serial.println(lightStatus[i]);
-  }
-}

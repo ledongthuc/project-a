@@ -38,10 +38,31 @@ char BleManager::getResponse() {
   char* responses;
   char response = 0;
   do {
+    response = 0;
     responses = this->hm10->getResponse();
     
-    response = responses[7];
+    if(this->isConnectionResponse(responses) &&
+       responses[7] != 0) {
+      response = responses[7];
+    } 
+    
+    if(!this->isConnectionResponse(responses))
+    {
+      response = responses[0];
+    }
+    
+    
+    
+    delay(1000);
   } while(response == 0);
   
   return response;
+}
+
+bool BleManager::isConnectionResponse(char* response) {
+  if(strncmp(response, "OK+CONN", 7) == 0 ||
+     strncmp(response, "OK+LOST", 7) == 0) {
+     return true;
+   }
+  return false;
 }
