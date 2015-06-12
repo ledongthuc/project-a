@@ -10,6 +10,7 @@ class OutletManager {
     void updateOutletStatus(char signal);
     void setOutletSignal(char signal);
     char getOutletSignal();
+    Outlet** getOutlets();
   private:
     int numberOfOutlet;
     Outlet* outlets[4];

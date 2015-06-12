@@ -24,3 +24,7 @@ void OutletManager::updateOutletStatus(char signal) {
 char OutletManager::getOutletSignal() {
  return this->signal; 
 }
+
+Outlet** OutletManager::getOutlets() {
+  return this->outlets;
+}

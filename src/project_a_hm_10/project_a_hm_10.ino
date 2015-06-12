@@ -1,6 +1,7 @@
 #include <Utility.h>
 #include "OutletManager.h"
 #include "BleManager.h"
+#include "RelayManager.h"
 
 #define RX_PIN                     10
 #define TX_PIN                     11
@@ -12,6 +13,7 @@
 
 BleManager* bleManager;
 OutletManager* outletManager;
+RelayManager* relayManager;
 int lightEnable[4];
 int lightStatus[4];
   
@@ -24,6 +26,7 @@ void setup() {
   bleManager->setAdvertisingData(DEFAULT_ADVERTISING_DATA);
   
   outletManager = new OutletManager(4);
+  relayManager = new RelayManager();
 }
 
 void loop() {
@@ -34,9 +37,13 @@ void loop() {
   Serial.println();
   
   outletManager->updateOutletStatus(rawResponse);
-  
   bleManager->disconnectRemotedDevices();
   bleManager->setAdvertisingData(rawResponse);
+  
+  Outlet** outlets = outletManager->getOutlets();
+  relayManager->updateRelaySignal(outlets);
+  
+  Serial.println("---------^-^--------");
   
   delay(5000);
 }
