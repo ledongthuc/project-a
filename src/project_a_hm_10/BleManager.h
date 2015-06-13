@@ -4,9 +4,6 @@
 #define BLE_MANAGER_H
 
 class BleManager {
-  private:
-    Hm10* hm10;
-    bool isConnectionResponse(char* response);
   public:
     BleManager(int rxPin, int txPin, int baudRate);
     void setServiceId(char* serviceId);
@@ -14,6 +11,9 @@ class BleManager {
     void setAdvertisingData(char advertisingData);
     void disconnectRemotedDevices();
     char getResponse();
+  private:
+    Hm10* hm10Controller;
+    bool isConnectStatusString(char* response);
 };
 
 #endif
