@@ -26,7 +26,10 @@ void setup() {
   bleManager->setAdvertisingData(DEFAULT_ADVERTISING_DATA);
   
   outletManager = new OutletManager(4);
+  Outlet** outlets = outletManager->getOutlets();
+  
   relayManager = new RelayManager();
+  relayManager->updateRelaySignal(outlets);
 }
 
 void loop() {
