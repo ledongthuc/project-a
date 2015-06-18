@@ -10,6 +10,8 @@
 #define NOTIFICATION_INFORMATION   "1"
 #define DEFAULT_ADVERTISING_DATA   0b11110000
 
+#define DEBUG true
+
 
 BleManager* bleManager;
 OutletManager* outletManager;
@@ -33,7 +35,12 @@ void setup() {
 }
 
 void loop() {
-  char rawResponse = bleManager->getResponse();
+  char rawResponse;
+  if(DEBUG) {
+    rawResponse = 0b11110100;
+  } else {
+    rawResponse = bleManager->getResponse();
+  }
   
   Serial.print("RawResponse: ");
   Serial.print(rawResponse);
