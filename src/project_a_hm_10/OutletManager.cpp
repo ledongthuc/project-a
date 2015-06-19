@@ -1,5 +1,6 @@
 #include "OutletManager.h"
 #include "OutletStatus.h"
+#include "Arduino.h"
 
 OutletManager::OutletManager(int numberOfOutlet) {
   this->numberOfOutlet = numberOfOutlet;
@@ -8,20 +9,22 @@ OutletManager::OutletManager(int numberOfOutlet) {
   for(int index=0; index < 4; index++) {
     this->outlets[index] = new Outlet();
   }
+  
+  this->signal = 0b00000000;
 }
 
-void OutletManager::updateOutletStatus(char signal) {
-  this->signal = signal;
+void OutletManager::updateOutletStatus(unsigned char updatedOutletSignal) {
+  this->signal = this->signalParser->parseCurrentSignalByUpdatedSignal(this->signal, updatedOutletSignal);
   
   OutletStatus status[4];
-  this->signalParser->parseOutletSignal(signal, status);
+  this->signalParser->parseOutletSignal(this->signal, status);
   
   for(int index=0; index < 4; index++) {
     this->outlets[index]->setStatus(status[index]);
   }
 }
 
-char OutletManager::getOutletSignal() {
+unsigned char OutletManager::getOutletSignal() {
  return this->signal; 
 }
 

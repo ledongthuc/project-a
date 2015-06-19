@@ -10,7 +10,7 @@
 #define NOTIFICATION_INFORMATION   "1"
 #define DEFAULT_ADVERTISING_DATA   0b11110000
 
-#define DEBUG true
+#define DEBUG false
 
 
 BleManager* bleManager;
@@ -21,34 +21,42 @@ int lightStatus[4];
   
 void setup() {
   Serial.begin(9600);
-  
+   
   bleManager = new BleManager(RX_PIN, TX_PIN, BAUD_RATE);
   bleManager->setServiceId(SERVICE_ID);
   bleManager->setNotificationInformation(NOTIFICATION_INFORMATION);
   bleManager->setAdvertisingData(DEFAULT_ADVERTISING_DATA);
   
   outletManager = new OutletManager(4);
+  outletManager->updateOutletStatus(DEFAULT_ADVERTISING_DATA);
   Outlet** outlets = outletManager->getOutlets();
   
   relayManager = new RelayManager();
   relayManager->updateRelaySignal(outlets);
+  Serial.println("---------end setup--------");
 }
 
 void loop() {
-  char rawResponse;
+  unsigned char updatedOutletSignal;
   if(DEBUG) {
-    rawResponse = 0b11110100;
+    updatedOutletSignal = 0b11110100;
   } else {
-    rawResponse = bleManager->getResponse();
+    updatedOutletSignal = bleManager->getResponse();
   }
   
-  Serial.print("RawResponse: ");
-  Serial.print(rawResponse);
+  Serial.print("Raw update outlet signal: ");
+  Serial.print(updatedOutletSignal, BIN);
   Serial.println();
   
-  outletManager->updateOutletStatus(rawResponse);
+  outletManager->updateOutletStatus(updatedOutletSignal);
   bleManager->disconnectRemotedDevices();
-  bleManager->setAdvertisingData(rawResponse);
+  
+  Serial.print("Raw update outlet signal: ");
+  Serial.print(outletManager->getOutletSignal(), BIN);
+  Serial.println();
+
+  
+  bleManager->setAdvertisingData(outletManager->getOutletSignal());
   
   Outlet** outlets = outletManager->getOutlets();
   relayManager->updateRelaySignal(outlets);

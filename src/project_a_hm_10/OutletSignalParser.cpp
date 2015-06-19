@@ -2,7 +2,7 @@
 #include "Arduino.h"
 #include "OutletStatus.h"
 
-void OutletSignalParser::parseOutletSignal(char signal, OutletStatus outletStatus[]) {
+void OutletSignalParser::parseOutletSignal(unsigned char signal, OutletStatus outletStatus[]) {
   int checkedBit = 0b10000000;
   int checkedLight = 0b00001000;
   Serial.print("Signal: ");
@@ -23,4 +23,34 @@ void OutletSignalParser::parseOutletSignal(char signal, OutletStatus outletStatu
     checkedBit >>= 1;
     checkedLight >>= 1;
   }
+}
+
+unsigned char OutletSignalParser::parseCurrentSignalByUpdatedSignal(unsigned char currentSignal, unsigned char updatedSignal) {  
+  for(unsigned char existBit = 0b10000000; existBit > 0b00001000; existBit = existBit >> 1) {
+    if(existBit & updatedSignal) {      
+      if( (existBit & updatedSignal) && 
+         !(existBit & currentSignal)) {
+        currentSignal += existBit;
+      } 
+      
+      if(!(existBit & updatedSignal) && 
+          (existBit & currentSignal)) {
+        currentSignal -= existBit;
+      }
+
+      unsigned char enableBit = existBit >> 4;
+      
+      if( (enableBit & updatedSignal) && 
+         !(enableBit & currentSignal)) {
+        currentSignal += enableBit;
+      } 
+      
+      if(!(enableBit & updatedSignal) && 
+          (enableBit & currentSignal)) {
+        currentSignal -= enableBit;
+      }
+    }
+  }
+
+  return currentSignal;
 }

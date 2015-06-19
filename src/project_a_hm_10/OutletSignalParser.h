@@ -5,7 +5,8 @@
 
 class OutletSignalParser {
   public:
-    void parseOutletSignal(char signal, OutletStatus outletStatus[]);
+    void parseOutletSignal(unsigned char signal, OutletStatus outletStatus[]);
+    unsigned char parseCurrentSignalByUpdatedSignal(unsigned char currentSignal, unsigned char updatedSignal);
 };
 
 #endif
