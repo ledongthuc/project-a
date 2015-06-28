@@ -4,10 +4,10 @@
 #ifndef OUTLET_MANAGER_H
 #define OUTLET_MANAGER_H
 
-class OutletManager {
+class OutletStatusManager {
   public:
-    OutletManager(int numberOfOutlet);
-    void updateOutletStatus(unsigned char signal);
+    OutletStatusManager(int numberOfOutlet);
+    void parseRequestFromMobile(unsigned char signal);
     void setOutletSignal(unsigned char signal);
     unsigned char getOutletSignal();
     Outlet** getOutlets();

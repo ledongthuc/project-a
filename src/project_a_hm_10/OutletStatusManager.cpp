@@ -1,8 +1,8 @@
-#include "OutletManager.h"
+#include "OutletStatusManager.h"
 #include "OutletStatus.h"
 #include "Arduino.h"
 
-OutletManager::OutletManager(int numberOfOutlet) {
+OutletStatusManager::OutletStatusManager(int numberOfOutlet) {
   this->numberOfOutlet = numberOfOutlet;
   this->signalParser = new OutletSignalParser();
   
@@ -13,7 +13,7 @@ OutletManager::OutletManager(int numberOfOutlet) {
   this->signal = 0b00000000;
 }
 
-void OutletManager::updateOutletStatus(unsigned char updatedOutletSignal) {
+void OutletStatusManager::parseRequestFromMobile(unsigned char updatedOutletSignal) {
   this->signal = this->signalParser->parseCurrentSignalByUpdatedSignal(this->signal, updatedOutletSignal);
   
   OutletStatus status[4];
@@ -24,10 +24,10 @@ void OutletManager::updateOutletStatus(unsigned char updatedOutletSignal) {
   }
 }
 
-unsigned char OutletManager::getOutletSignal() {
+unsigned char OutletStatusManager::getOutletSignal() {
  return this->signal; 
 }
 
-Outlet** OutletManager::getOutlets() {
+Outlet** OutletStatusManager::getOutlets() {
   return this->outlets;
 }
